@@ -601,20 +601,275 @@ async function iniciarRodada(id) {
 }
 
 async function finalizarRodada(id) {
-    if (!confirm('Finalizar esta rodada? O mercado será reaberto.')) return;
+    if (!confirm('Finalizar esta rodada? O mercado será reaberto e as cartoletas serão restauradas.')) return;
     
     try {
-        const { error } = await supabase
+        console.log('🏁 Finalizando rodada e restaurando cartoletas...');
+        
+        // 1. BUSCAR TODAS AS ESCALAÇÕES DA RODADA
+        const { data: escalacoes, error: errorEscalacoes } = await supabase
+            .from('lineups')
+            .select(`
+                id,
+                user_id,
+                lineup_players (
+                    player_id,
+                    players (
+                        price
+                    )
+                )
+            `)
+            .eq('round_id', id);
+        
+        if (errorEscalacoes) throw errorEscalacoes;
+        
+        console.log(`📋 ${escalacoes?.length || 0} escalações encontradas`);
+        
+        // 2. CALCULAR E RESTAURAR CARTOLETAS PARA CADA USUÁRIO
+        if (escalacoes && escalacoes.length > 0) {
+            for (const escalacao of escalacoes) {
+                // Calcular custo total da escalação
+                let custoEscalacao = 0;
+                
+                if (escalacao.lineup_players && Array.isArray(escalacao.lineup_players)) {
+                    escalacao.lineup_players.forEach(lp => {
+                        if (lp.players && lp.players.price) {
+                            custoEscalacao += parseFloat(lp.players.price);
+                        }
+                    });
+                }
+                
+                console.log(`💰 Usuário ${escalacao.user_id}: Restaurando C$ ${custoEscalacao.toFixed(2)}`);
+                
+                // Buscar saldo atual do usuário
+                const { data: usuario, error: errorUsuario } = await supabase
+                    .from('users')
+                    .select('cartoletas')
+                    .eq('id', escalacao.user_id)
+                    .single();
+                
+                if (errorUsuario) {
+                    console.error(`Erro ao buscar usuário ${escalacao.user_id}:`, errorUsuario);
+                    continue;
+                }
+                
+                // Calcular novo saldo
+                const saldoAtual = parseFloat(usuario.cartoletas) || 0;
+                const novoSaldo = saldoAtual + custoEscalacao;
+                
+                console.log(`  Saldo atual: C$ ${saldoAtual.toFixed(2)}`);
+                console.log(`  Novo saldo: C$ ${novoSaldo.toFixed(2)}`);
+                
+                // Atualizar saldo do usuário
+                const { error: errorUpdate } = await supabase
+                    .from('users')
+                    .update({ cartoletas: novoSaldo })
+                    .eq('id', escalacao.user_id);
+                
+                if (errorUpdate) {
+                    console.error(`Erro ao atualizar saldo do usuário ${escalacao.user_id}:`, errorUpdate);
+                } else {
+                    console.log(`  ✅ Saldo restaurado com sucesso`);
+                }
+            }
+        }
+        
+        // 3. FINALIZAR A RODADA
+        const { error: errorRodada } = await supabase
             .from('rounds')
             .update({ status: 'finished' })
             .eq('id', id);
         
-        if (error) throw error;
+        if (errorRodada) throw errorRodada;
         
-        alert('Rodada finalizada! Mercado reaberto.');
+        // 4. MENSAGEM DE SUCESSO
+        const totalUsuarios = escalacoes?.length || 0;
+        alert(`✅ Rodada finalizada com sucesso!\n\n` +
+              `📊 ${totalUsuarios} usuário(s) tiveram suas cartoletas restauradas.\n` +
+              `🛒 Mercado reaberto para nova escalação.`);
+        
+        console.log('✅ Rodada finalizada e cartoletas restauradas');
+        
+        // Recarregar lista de rodadas
         await carregarRodadas();
+        
     } catch (error) {
-        console.error('Erro ao finalizar rodada:', error);
+        console.error('❌ Erro ao finalizar rodada:', error);
+        alert('❌ Erro ao finalizar rodada: ' + error.message);
+    }
+}
+
+// ============================================
+// FUNÇÃO AUXILIAR: Verificar Restauração
+// ============================================
+
+/**
+ * Função para verificar se as cartoletas foram restauradas corretamente
+ * Útil para debug
+ */
+async function verificarRestauracao(roundId) {
+    try {
+        console.log('🔍 Verificando restauração da rodada:', roundId);
+        
+        const { data: escalacoes } = await supabase
+            .from('lineups')
+            .select(`
+                user_id,
+                users (
+                    team_name,
+                    cartoletas
+                ),
+                lineup_players (
+                    players (
+                        name,
+                        price
+                    )
+                )
+            `)
+            .eq('round_id', roundId);
+        
+        console.log('📊 Relatório de Restauração:');
+        console.log('================================');
+        
+        escalacoes?.forEach((esc, index) => {
+            let custo = 0;
+            esc.lineup_players?.forEach(lp => {
+                custo += parseFloat(lp.players?.price || 0);
+            });
+            
+            console.log(`\n${index + 1}. ${esc.users?.team_name}`);
+            console.log(`   Custo da Escalação: C$ ${custo.toFixed(2)}`);
+            console.log(`   Saldo Atual: C$ ${parseFloat(esc.users?.cartoletas || 0).toFixed(2)}`);
+            console.log(`   Jogadores: ${esc.lineup_players?.length || 0}`);
+        });
+        
+        console.log('\n================================');
+        
+    } catch (error) {
+        console.error('Erro ao verificar restauração:', error);
+    }
+}
+
+// ============================================
+// FUNÇÃO AUXILIAR: Restauração Manual
+// ============================================
+
+/**
+ * Função para restaurar cartoletas manualmente se houver algum problema
+ * USE APENAS SE NECESSÁRIO
+ */
+async function restaurarCartoletasManual(roundId) {
+    if (!confirm('⚠️ ATENÇÃO: Esta função restaura cartoletas manualmente.\n\n' +
+                 'Use apenas se houve algum erro na restauração automática.\n\n' +
+                 'Deseja continuar?')) {
+        return;
+    }
+    
+    try {
+        console.log('🔧 Iniciando restauração manual...');
+        
+        const { data: escalacoes } = await supabase
+            .from('lineups')
+            .select(`
+                id,
+                user_id,
+                lineup_players (
+                    players (
+                        price
+                    )
+                )
+            `)
+            .eq('round_id', roundId);
+        
+        let totalRestaurado = 0;
+        let usuariosAfetados = 0;
+        
+        for (const escalacao of escalacoes || []) {
+            let custoEscalacao = 0;
+            
+            escalacao.lineup_players?.forEach(lp => {
+                custoEscalacao += parseFloat(lp.players?.price || 0);
+            });
+            
+            if (custoEscalacao > 0) {
+                const { data: usuario } = await supabase
+                    .from('users')
+                    .select('cartoletas')
+                    .eq('id', escalacao.user_id)
+                    .single();
+                
+                const novoSaldo = parseFloat(usuario?.cartoletas || 0) + custoEscalacao;
+                
+                await supabase
+                    .from('users')
+                    .update({ cartoletas: novoSaldo })
+                    .eq('id', escalacao.user_id);
+                
+                totalRestaurado += custoEscalacao;
+                usuariosAfetados++;
+                
+                console.log(`✅ Usuário ${escalacao.user_id}: +C$ ${custoEscalacao.toFixed(2)}`);
+            }
+        }
+        
+        alert(`✅ Restauração manual concluída!\n\n` +
+              `👥 Usuários afetados: ${usuariosAfetados}\n` +
+              `💰 Total restaurado: C$ ${totalRestaurado.toFixed(2)}`);
+        
+        console.log('✅ Restauração manual concluída');
+        
+    } catch (error) {
+        console.error('❌ Erro na restauração manual:', error);
+        alert('❌ Erro na restauração manual: ' + error.message);
+    }
+}
+
+// ============================================
+// FUNÇÃO: Resetar Saldo de Todos os Usuários
+// ============================================
+
+/**
+ * Função para resetar o saldo de TODOS os usuários para C$ 40.00
+ * USE APENAS NO INÍCIO DE UMA NOVA TEMPORADA
+ */
+async function resetarSaldoTodosUsuarios() {
+    if (!confirm('⚠️ ATENÇÃO: Esta ação vai resetar o saldo de TODOS os usuários para C$ 40.00!\n\n' +
+                 'Use apenas no início de uma nova temporada.\n\n' +
+                 'Esta ação NÃO pode ser desfeita!\n\n' +
+                 'Deseja continuar?')) {
+        return;
+    }
+    
+    if (!confirm('Você tem CERTEZA ABSOLUTA?\n\nDigite SIM para confirmar.') === 'SIM') {
+        alert('Operação cancelada.');
+        return;
+    }
+    
+    try {
+        console.log('🔄 Resetando saldo de todos os usuários...');
+        
+        const { data: usuarios, error: errorUsuarios } = await supabase
+            .from('users')
+            .select('id, team_name, cartoletas');
+        
+        if (errorUsuarios) throw errorUsuarios;
+        
+        for (const usuario of usuarios || []) {
+            await supabase
+                .from('users')
+                .update({ cartoletas: 40.00 })
+                .eq('id', usuario.id);
+            
+            console.log(`✅ ${usuario.team_name}: C$ ${usuario.cartoletas} → C$ 40.00`);
+        }
+        
+        alert(`✅ Saldo resetado!\n\n${usuarios?.length || 0} usuários agora têm C$ 40.00`);
+        
+        console.log('✅ Reset de saldo concluído');
+        
+    } catch (error) {
+        console.error('❌ Erro ao resetar saldos:', error);
+        alert('❌ Erro: ' + error.message);
     }
 }
 
@@ -710,3 +965,12 @@ window.finalizarRodada = finalizarRodada;
 window.excluirRodada = excluirRodada;
 
 console.log('✅ admin.js carregado com sistema de tabs corrigido');
+window.verificarRestauracao = verificarRestauracao;
+window.restaurarCartoletasManual = restaurarCartoletasManual;
+window.resetarSaldoTodosUsuarios = resetarSaldoTodosUsuarios;
+
+console.log('✅ Sistema de restauração de cartoletas carregado');
+console.log('💡 Funções disponíveis no console:');
+console.log('   - verificarRestauracao(roundId)');
+console.log('   - restaurarCartoletasManual(roundId)');
+console.log('   - resetarSaldoTodosUsuarios()');

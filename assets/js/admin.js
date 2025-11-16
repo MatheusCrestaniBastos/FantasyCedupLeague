@@ -66,7 +66,7 @@ async function initializeAdmin() {
         
         setupEventListeners();
         setupFiltros();
-        setupTabs(); // ← IMPORTANTE: Configurar tabs
+        setupTabs(); // ← ADICIONE ESTA LINHA
         
         console.log('✅ Painel admin inicializado');
     } catch (error) {

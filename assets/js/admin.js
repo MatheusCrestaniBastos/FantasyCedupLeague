@@ -66,7 +66,7 @@ async function initializeAdmin() {
         
         setupEventListeners();
         setupFiltros();
-        setupTabs();
+        setupTabs(); // ← IMPORTANTE: Configurar tabs
         
         console.log('✅ Painel admin inicializado');
     } catch (error) {
@@ -103,27 +103,57 @@ async function carregarEstatisticas() {
 }
 
 // ============================================
-// TABS
+// SISTEMA DE TABS - CORRIGIDO
 // ============================================
 
 function setupTabs() {
-    const tabs = document.querySelectorAll('[data-tab]');
-    const contents = document.querySelectorAll('[data-content]');
+    console.log('🔧 Configurando sistema de tabs...');
     
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            const target = tab.dataset.tab;
+    // Selecionar todos os botões de tab
+    const tabButtons = document.querySelectorAll('[data-tab]');
+    const tabContents = document.querySelectorAll('[data-content]');
+    
+    console.log('Tabs encontradas:', tabButtons.length);
+    console.log('Conteúdos encontrados:', tabContents.length);
+    
+    // Adicionar evento de clique em cada botão
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            console.log('Tab clicada:', targetTab);
             
-            tabs.forEach(t => t.classList.remove('active', 'border-blue-600', 'text-blue-600'));
-            tabs.forEach(t => t.classList.add('border-transparent', 'text-gray-600'));
+            // Remover classe 'active' de todos os botões
+            tabButtons.forEach(btn => {
+                btn.classList.remove('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                btn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+            });
             
-            tab.classList.add('active', 'border-blue-600', 'text-blue-600');
-            tab.classList.remove('border-transparent', 'text-gray-600');
+            // Adicionar classe 'active' no botão clicado
+            this.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+            this.classList.add('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
             
-            contents.forEach(c => c.classList.add('hidden'));
-            document.querySelector(`[data-content="${target}"]`)?.classList.remove('hidden');
+            // Esconder todos os conteúdos
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Mostrar conteúdo da tab selecionada
+            const targetContent = document.querySelector(`[data-content="${targetTab}"]`);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+                console.log('Conteúdo exibido:', targetTab);
+            } else {
+                console.error('Conteúdo não encontrado para tab:', targetTab);
+            }
         });
     });
+    
+    // Ativar primeira tab por padrão
+    if (tabButtons.length > 0) {
+        tabButtons[0].click();
+    }
+    
+    console.log('✅ Sistema de tabs configurado');
 }
 
 // ============================================
@@ -193,26 +223,32 @@ function renderizarTabelaJogadores(jogadores) {
     if (!tbody) return;
     
     if (!jogadores || jogadores.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8">Nenhum jogador encontrado</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-500 dark:text-gray-400">Nenhum jogador encontrado</td></tr>';
         return;
     }
     
+    // Placeholder SVG
+    const imgPlaceholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' font-size='40' text-anchor='middle' dy='.3em'%3E👤%3C/text%3E%3C/svg%3E";
+    
     tbody.innerHTML = jogadores.map(j => `
-        <tr>
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
             <td class="px-4 py-3">
                 <div class="flex items-center gap-2">
-                    <img src="${j.photo_url || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-full" alt="${j.name}">
+                    <img src="${j.photo_url || imgPlaceholder}" 
+                         class="w-10 h-10 rounded-full object-cover" 
+                         alt="${j.name}"
+                         onerror="this.onerror=null; this.src='${imgPlaceholder}'">
                     <div>
-                        <div class="font-semibold">${j.name}</div>
-                        <div class="text-sm text-gray-500">${j.team?.name || '-'}</div>
+                        <div class="font-semibold text-gray-900 dark:text-white">${j.name}</div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">${j.team?.name || '-'}</div>
                     </div>
                 </div>
             </td>
             <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded ${getCorPosicao(j.position)}">${j.position}</span></td>
-            <td class="px-4 py-3">C$ ${j.price.toFixed(2)}</td>
+            <td class="px-4 py-3 text-gray-900 dark:text-white">C$ ${j.price.toFixed(2)}</td>
             <td class="px-4 py-3">
-                <button onclick="editarJogador(${j.id})" class="px-3 py-1 bg-blue-600 text-white rounded text-sm mr-2">Editar</button>
-                <button onclick="excluirJogador(${j.id})" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Excluir</button>
+                <button onclick="editarJogador(${j.id})" class="px-3 py-1 bg-blue-600 text-white rounded text-sm mr-2 hover:bg-blue-700">Editar</button>
+                <button onclick="excluirJogador(${j.id})" class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700">Excluir</button>
             </td>
         </tr>
     `).join('');
@@ -220,10 +256,10 @@ function renderizarTabelaJogadores(jogadores) {
 
 function getCorPosicao(posicao) {
     const cores = {
-        'GOL': 'bg-yellow-100 text-yellow-800',
-        'FIX': 'bg-blue-100 text-blue-800',
-        'ALA': 'bg-green-100 text-green-800',
-        'PIV': 'bg-red-100 text-red-800'
+        'GOL': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+        'FIX': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+        'ALA': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+        'PIV': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
     };
     return cores[posicao] || 'bg-gray-100 text-gray-800';
 }
@@ -349,7 +385,7 @@ function preencherFiltroTimes() {
     const filtro = document.getElementById('filtro-time-jogadores');
     if (!filtro) return;
     
-    filtro.innerHTML = '<option value="">Todos os times</option>' +
+    filtro.innerHTML = '<option value="">Todos</option>' +
         times.map(t => `<option value="${t}">${t}</option>`).join('');
 }
 
@@ -379,20 +415,25 @@ function renderizarTabelaTimes(times) {
     if (!tbody) return;
     
     if (!times || times.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8">Nenhum time cadastrado</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="2" class="text-center py-8 text-gray-500 dark:text-gray-400">Nenhum time cadastrado</td></tr>';
         return;
     }
     
+    const logoPlaceholder = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' font-size='40' text-anchor='middle' dy='.3em'%3E⚽%3C/text%3E%3C/svg%3E";
+    
     tbody.innerHTML = times.map(t => `
-        <tr>
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
             <td class="px-4 py-3">
                 <div class="flex items-center gap-2">
-                    <img src="${t.logo_url || 'https://via.placeholder.com/40'}" class="w-10 h-10" alt="${t.name}">
-                    <span class="font-semibold">${t.name}</span>
+                    <img src="${t.logo_url || logoPlaceholder}" 
+                         class="w-10 h-10 object-contain" 
+                         alt="${t.name}"
+                         onerror="this.onerror=null; this.src='${logoPlaceholder}'">
+                    <span class="font-semibold text-gray-900 dark:text-white">${t.name}</span>
                 </div>
             </td>
             <td class="px-4 py-3">
-                <button onclick="excluirTime(${t.id})" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Excluir</button>
+                <button onclick="excluirTime(${t.id})" class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700">Excluir</button>
             </td>
         </tr>
     `).join('');
@@ -464,6 +505,7 @@ async function carregarRodadas() {
         rodadasCache = rodadas || [];
         renderizarTabelaRodadas(rodadasCache);
         preencherSelectRodadas(rodadasCache);
+        preencherSelectGerenciarRodadas(rodadasCache);
     } catch (error) {
         console.error('Erro ao carregar rodadas:', error);
     }
@@ -474,26 +516,26 @@ function renderizarTabelaRodadas(rodadas) {
     if (!tbody) return;
     
     if (!rodadas || rodadas.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8">Nenhuma rodada criada</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-gray-500 dark:text-gray-400">Nenhuma rodada criada</td></tr>';
         return;
     }
     
     tbody.innerHTML = rodadas.map(r => {
-        const statusClass = r.status === 'active' ? 'bg-green-100 text-green-800' :
-                           r.status === 'finished' ? 'bg-gray-100 text-gray-800' :
-                           'bg-blue-100 text-blue-800';
+        const statusClass = r.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' :
+                           r.status === 'finished' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' :
+                           'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
         
         const statusText = r.status === 'active' ? 'Ativa' :
                           r.status === 'finished' ? 'Finalizada' : 'Pendente';
         
         return `
-            <tr>
-                <td class="px-4 py-3 font-semibold">${r.name}</td>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">${r.name}</td>
                 <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded ${statusClass}">${statusText}</span></td>
                 <td class="px-4 py-3">
-                    ${r.status === 'pending' ? `<button onclick="iniciarRodada(${r.id})" class="px-3 py-1 bg-green-600 text-white rounded text-sm mr-2">Iniciar</button>` : ''}
-                    ${r.status === 'active' ? `<button onclick="finalizarRodada(${r.id})" class="px-3 py-1 bg-blue-600 text-white rounded text-sm mr-2">Finalizar</button>` : ''}
-                    <button onclick="excluirRodada(${r.id})" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Excluir</button>
+                    ${r.status === 'pending' ? `<button onclick="iniciarRodada(${r.id})" class="px-3 py-1 bg-green-600 text-white rounded text-sm mr-2 hover:bg-green-700">Iniciar</button>` : ''}
+                    ${r.status === 'active' ? `<button onclick="finalizarRodada(${r.id})" class="px-3 py-1 bg-blue-600 text-white rounded text-sm mr-2 hover:bg-blue-700">Finalizar</button>` : ''}
+                    <button onclick="excluirRodada(${r.id})" class="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700">Excluir</button>
                 </td>
             </tr>
         `;
@@ -507,6 +549,14 @@ function preencherSelectRodadas(rodadas) {
     const rodadasAtivas = rodadas.filter(r => r.status === 'active');
     select.innerHTML = '<option value="">Selecione uma rodada</option>' +
         rodadasAtivas.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+}
+
+function preencherSelectGerenciarRodadas(rodadas) {
+    const select = document.getElementById('rodada-gerenciar');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">Selecione uma rodada...</option>' +
+        rodadas.map(r => `<option value="${r.id}">${r.name} - ${r.status}</option>`).join('');
 }
 
 async function criarRodada() {
@@ -659,4 +709,4 @@ window.iniciarRodada = iniciarRodada;
 window.finalizarRodada = finalizarRodada;
 window.excluirRodada = excluirRodada;
 
-console.log('✅ admin.js carregado');//
+console.log('✅ admin.js carregado com sistema de tabs corrigido');

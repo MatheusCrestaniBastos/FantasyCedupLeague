@@ -11,6 +11,7 @@
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
     
+    <!-- Navbar -->
     <nav class="bg-white dark:bg-gray-800 shadow-lg">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
@@ -18,7 +19,7 @@
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white">🏆 CEDUP League</h1>
                     <div class="flex space-x-4 text-sm font-medium">
                         <a href="dashboard.html" class="text-blue-600 dark:text-blue-400 font-bold">Dashboard</a>
-                        <a href="mercado.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-600">Mercado</a>
+                        <a href="mercado.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Mercado</a>
                         <a id="link-admin" href="admin.html" class="text-red-600 dark:text-red-400 hidden">Admin</a>
                     </div>
                 </div>
@@ -28,11 +29,11 @@
                         <span id="user-team-name" class="block font-semibold text-gray-900 dark:text-white">Carregando...</span>
                         <span id="user-cartoletas" class="block text-gray-500 dark:text-gray-400">C$ 0.00</span>
                     </div>
-                    <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                         <span class="dark:hidden">🌙</span>
                         <span class="hidden dark:inline">☀️</span>
                     </button>
-                    <button onclick="logout()" class="p-2 text-red-500 hover:text-red-700">
+                    <button onclick="logout()" class="p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                         </svg>
@@ -44,7 +45,9 @@
 
     <main class="container mx-auto px-4 py-8">
         
+        <!-- Cards de estatísticas -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <!-- Posição -->
             <div class="bg-gradient-to-br from-blue-500 to-blue-700 text-white rounded-lg shadow-xl p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -55,6 +58,7 @@
                 </div>
             </div>
 
+            <!-- Pontos -->
             <div class="bg-gradient-to-br from-green-500 to-green-700 text-white rounded-lg shadow-xl p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -65,6 +69,7 @@
                 </div>
             </div>
 
+            <!-- Cartoletas -->
             <div class="bg-gradient-to-br from-yellow-500 to-yellow-700 text-white rounded-lg shadow-xl p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -75,6 +80,7 @@
                 </div>
             </div>
 
+            <!-- Rodadas -->
             <div class="bg-gradient-to-br from-purple-500 to-purple-700 text-white rounded-lg shadow-xl p-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -86,6 +92,7 @@
             </div>
         </div>
 
+        <!-- Ranking Geral -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 mb-8">
             <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">🏆 Ranking Geral</h2>
             
@@ -101,7 +108,7 @@
                     </thead>
                     <tbody id="ranking-tbody" class="divide-y divide-gray-200 dark:divide-gray-700">
                         <tr>
-                            <td colspan="4" class="px-4 py-8 text-center text-gray-500">
+                            <td colspan="4" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                                 <div class="flex items-center justify-center">
                                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3"></div>
                                     Carregando ranking...
@@ -113,24 +120,26 @@
             </div>
         </div>
 
+        <!-- Histórico -->
         <div id="historico-container" class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6">
             <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">📈 Seu Histórico</h2>
             
             <div id="historico-lista" class="space-y-3">
                 <div class="flex items-center justify-center py-8">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3"></div>
-                    <span class="text-gray-500">Carregando histórico...</span>
+                    <span class="text-gray-500 dark:text-gray-400">Carregando histórico...</span>
                 </div>
             </div>
         </div>
 
     </main>
 
+    <!-- Scripts na ordem correta -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/config.js"></script>
+    <script src="assets/js/utils.js"></script>
     <script src="assets/js/theme.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/dashboard.js"></script>
 </body>
 </html>
-//

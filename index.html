@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CEDUP League - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
 </head>
 <body class="bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen flex items-center justify-center">
     
@@ -15,6 +17,7 @@
             <p class="text-gray-600">Fantasy Game do CEDUP</p>
         </div>
 
+        <!-- Tabs de alternância -->
         <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
             <button id="btn-login" onclick="mostrarLogin()" class="flex-1 py-2 rounded-md bg-white shadow-sm font-semibold text-blue-600 transition-all">
                 Login
@@ -24,6 +27,7 @@
             </button>
         </div>
 
+        <!-- Formulário de Login -->
         <form id="form-login" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
@@ -45,6 +49,7 @@
             </button>
         </form>
 
+        <!-- Formulário de Cadastro -->
         <form id="form-cadastro" class="space-y-4 hidden">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Time</label>
@@ -73,11 +78,13 @@
             </button>
         </form>
 
+        <!-- Container de mensagens -->
         <div id="mensagem-auth" class="mt-4 hidden"></div>
     </div>
 
+    <!-- Scripts na ordem correta -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/config.js"></script>
     <script src="assets/js/auth.js"></script>
 </body>
 </html>
-//

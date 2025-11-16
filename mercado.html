@@ -10,6 +10,8 @@
     </script>
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    
+    <!-- Header -->
     <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-4">
@@ -20,13 +22,13 @@
                     </span>
                 </div>
                 <nav class="flex items-center space-x-4">
-                    <a href="dashboard.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">Dashboard</a>
+                    <a href="dashboard.html" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Dashboard</a>
                     <a href="mercado.html" class="text-blue-600 dark:text-blue-400 font-medium">Mercado</a>
-                    <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
+                    <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                         <span class="dark:hidden">🌙</span>
                         <span class="hidden dark:inline">☀️</span>
                     </button>
-                    <button onclick="logout()" class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300">Sair</button>
+                    <button onclick="logout()" class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors">Sair</button>
                 </nav>
             </div>
         </div>
@@ -35,16 +37,18 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
             
+            <!-- Coluna Principal - Jogadores -->
             <div class="xl:col-span-2">
                 
+                <!-- Filtros -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Filtros e Busca</h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Posição</label>
-                            <select id="filtro-posicao" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                                <option value="todas">Todas as posições</option>
+                            <select id="filtro-posicao" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todas as posições</option>
                                 <option value="GOL">Goleiro</option>
                                 <option value="FIX">Fixo</option>
                                 <option value="ALA">Ala</option>
@@ -54,35 +58,52 @@
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Time</label>
-                            <select id="filtro-time" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                                <option value="todos">Todos os times</option>
+                            <select id="filtro-time" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                                <option value="">Todos os times</option>
                             </select>
                         </div>
                         
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Buscar</label>
                             <input type="text" id="busca-jogador" placeholder="Nome do jogador..." 
-                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500">
                         </div>
                     </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ordenar por</label>
+                        <select id="filtro-ordem" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500">
+                            <option value="nome">Nome (A-Z)</option>
+                            <option value="preco-asc">Preço (Menor → Maior)</option>
+                            <option value="preco-desc">Preço (Maior → Menor)</option>
+                        </select>
+                    </div>
                     
-                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mt-4">
                         <p class="text-sm text-blue-800 dark:text-blue-200">
-                            <strong>⚽ Futsal:</strong> Monte seu time com 5 jogadores • 
+                            <strong>⚽ Futsal:</strong> Monte seu time com 5 jogadores (1 GOL, 1 FIX, 2 ALA, 1 PIV) • 
                             <strong>Saldo:</strong> C$ 40,00
                         </p>
                     </div>
                 </div>
 
+                <!-- Lista de Jogadores -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Jogadores Disponíveis</h2>
                     <div id="lista-jogadores" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Jogadores serão inseridos aqui via JavaScript -->
+                        <div class="col-span-full text-center py-12">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                            <p class="text-gray-500 dark:text-gray-400">Carregando jogadores...</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Coluna Lateral - Escalação -->
             <div class="xl:col-span-1">
                 
+                <!-- Orçamento -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">💰 Orçamento</h3>
                     
@@ -106,20 +127,89 @@
                     </div>
                 </div>
 
+                <!-- Escalação Atual -->
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">⚽ Sua Escalação</h3>
                     
-                    <div id="escalacao-atual">
+                    <!-- Resumo da Escalação -->
+                    <div id="resumo-escalacao" class="mb-4">
+                        <!-- Resumo será inserido aqui via JavaScript -->
+                    </div>
+                    
+                    <!-- Posições -->
+                    <div class="space-y-3">
+                        <!-- Goleiro -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🧤 Goleiro</label>
+                            <div id="container-gol">
+                                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
+                                    <div class="text-gray-400 dark:text-gray-500 text-sm">
+                                        <div class="font-semibold mb-1">GOL</div>
+                                        <div class="text-xs">Vazio</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Fixo -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🛡️ Fixo</label>
+                            <div id="container-fix">
+                                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
+                                    <div class="text-gray-400 dark:text-gray-500 text-sm">
+                                        <div class="font-semibold mb-1">FIX</div>
+                                        <div class="text-xs">Vazio</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alas -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🏃 Alas</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div id="container-ala-1">
+                                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
+                                        <div class="text-gray-400 dark:text-gray-500 text-sm">
+                                            <div class="font-semibold mb-1">ALA 1</div>
+                                            <div class="text-xs">Vazio</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="container-ala-2">
+                                    <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
+                                        <div class="text-gray-400 dark:text-gray-500 text-sm">
+                                            <div class="font-semibold mb-1">ALA 2</div>
+                                            <div class="text-xs">Vazio</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pivô -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">🎯 Pivô</label>
+                            <div id="container-piv">
+                                <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
+                                    <div class="text-gray-400 dark:text-gray-500 text-sm">
+                                        <div class="font-semibold mb-1">PIV</div>
+                                        <div class="text-xs">Vazio</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Botões de Ação -->
                 <div class="space-y-3">
-                    <button id="btn-salvar-escalacao" 
+                    <button id="btn-salvar-escalacao" onclick="salvarEscalacao()"
                             class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">
                         💾 Salvar Escalação
                     </button>
                     
-                    <button id="btn-limpar-escalacao" 
+                    <button id="btn-limpar-escalacao" onclick="limparEscalacao()"
                             class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
                         🗑️ Limpar Escalação
                     </button>
@@ -134,6 +224,7 @@
         </div>
     </div>
 
+    <!-- Loading Overlay -->
     <div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white dark:bg-gray-800 rounded-lg p-6 flex items-center space-x-3">
             <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
@@ -141,11 +232,12 @@
         </div>
     </div>
 
+    <!-- Scripts na ordem correta -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="assets/js/config.js"></script>
+    <script src="assets/js/utils.js"></script>
     <script src="assets/js/theme.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/mercado.js"></script>
 </body>
 </html>
-//

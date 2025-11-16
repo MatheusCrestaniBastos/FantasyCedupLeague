@@ -504,7 +504,7 @@ function renderizarJogadores() {
                 <!-- Foto e Info -->
                 <div class="flex items-start gap-3 mb-3">
                     <div class="relative">
-                        <img src="${jogador.photo_url || 'https://via.placeholder.com/60'}" 
+                        <img src="${jogador.photo_url || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' font-size='40' text-anchor='middle' dy='.3em'%3E👤%3C/text%3E%3C/svg%3E"}" 
                              alt="${jogador.name}" 
                              class="w-16 h-16 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700">
                         <div class="absolute -bottom-1 -right-1 ${getCorCirculo(jogador.position)} w-6 h-6 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center text-xs font-bold text-white">
@@ -569,7 +569,7 @@ function renderizarPosicao(posicao, containerId) {
         container.innerHTML = `
             <div class="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm">
                 <div class="flex items-center gap-2 mb-2">
-                    <img src="${jogador.photo_url || 'https://via.placeholder.com/40'}" 
+                    <img src="${jogador.photo_url || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' font-size='40' text-anchor='middle' dy='.3em'%3E👤%3C/text%3E%3C/svg%3E"}" 
                          alt="${jogador.name}" 
                          class="w-10 h-10 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700">
                     <div class="flex-1 min-w-0">
@@ -612,7 +612,7 @@ function renderizarPosicaoALA() {
             container.innerHTML = `
                 <div class="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm">
                     <div class="flex items-center gap-2 mb-2">
-                        <img src="${jogador.photo_url || 'https://via.placeholder.com/40'}" 
+                        <img src="${jogador.photo_url || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' font-size='40' text-anchor='middle' dy='.3em'%3E👤%3C/text%3E%3C/svg%3E"}" 
                              alt="${jogador.name}" 
                              class="w-10 h-10 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700">
                         <div class="flex-1 min-w-0">

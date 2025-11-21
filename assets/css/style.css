@@ -1,0 +1,685 @@
+/* ============================================
+   CEDUP LEAGUE - ESTILOS GLOBAIS
+   ============================================ */
+
+/* Variables CSS */
+:root {
+    /* Cores principais */
+    --primary-blue: #3b82f6;
+    --primary-blue-dark: #2563eb;
+    --primary-green: #10b981;
+    --primary-green-dark: #059669;
+    --primary-red: #ef4444;
+    --primary-red-dark: #dc2626;
+    --primary-yellow: #f59e0b;
+    --primary-purple: #8b5cf6;
+    
+    /* Cores de fundo */
+    --bg-light: #f9fafb;
+    --bg-dark: #111827;
+    --card-light: #ffffff;
+    --card-dark: #1f2937;
+    
+    /* Texto */
+    --text-light: #111827;
+    --text-dark: #f9fafb;
+    --text-muted-light: #6b7280;
+    --text-muted-dark: #9ca3af;
+    
+    /* Bordas */
+    --border-light: #e5e7eb;
+    --border-dark: #374151;
+    
+    /* Sombras */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    
+    /* Transições */
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Raios de borda */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+}
+
+/* Reset e configurações base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   COMPONENTES REUTILIZÁVEIS
+   ============================================ */
+
+/* Botões */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--primary-blue-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-success {
+    background-color: var(--primary-green);
+    color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+    background-color: var(--primary-green-dark);
+}
+
+.btn-danger {
+    background-color: var(--primary-red);
+    color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background-color: var(--primary-red-dark);
+}
+
+.btn-secondary {
+    background-color: #6b7280;
+    color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #4b5563;
+}
+
+/* Cards */
+.card {
+    background: var(--card-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    transition: all var(--transition-normal);
+}
+
+.dark .card {
+    background: var(--card-dark);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-light);
+}
+
+.dark .card-header {
+    color: var(--text-dark);
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+}
+
+.badge-success {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.dark .badge-success {
+    background-color: #064e3b;
+    color: #6ee7b7;
+}
+
+.badge-danger {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.dark .badge-danger {
+    background-color: #7f1d1d;
+    color: #fca5a5;
+}
+
+.badge-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.dark .badge-warning {
+    background-color: #78350f;
+    color: #fcd34d;
+}
+
+.badge-info {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.dark .badge-info {
+    background-color: #1e3a8a;
+    color: #93c5fd;
+}
+
+/* Inputs */
+.input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    transition: all var(--transition-fast);
+    background: white;
+    color: var(--text-light);
+}
+
+.dark .input {
+    border-color: var(--border-dark);
+    background: #374151;
+    color: var(--text-dark);
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    grid: 2px;
+    lighting-color: rgba(59, 130, 246, 0.5);
+}
+
+.input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ============================================
+   ANIMAÇÕES
+   ============================================ */
+   
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.fade-in {
+    animation: fadeIn var(--transition-normal) ease-out;
+}
+
+.slide-in {
+    animation: slideIn var(--transition-normal) ease-out;
+}
+
+/* ============================================
+   COMPONENTES ESPECÍFICOS DO SISTEMA
+   ============================================ */
+
+/* Header de navegação */
+.navbar {
+    background: white;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: all var(--transition-normal);
+}
+
+.dark .navbar {
+    background: var(--card-dark);
+}
+
+/* Cards de estatísticas (dashboard) */
+.stat-card {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-lg);
+    transition: transform var(--transition-normal);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Tabela de ranking */
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ranking-table thead {
+    background: var(--bg-light);
+    border-bottom: 2px solid var(--border-light);
+}
+
+.dark .ranking-table thead {
+    background: #374151;
+    border-color: var(--border-dark);
+}
+
+.ranking-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted-light);
+}
+
+.dark .ranking-table th {
+    color: var(--text-muted-dark);
+}
+
+.ranking-table td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.dark .ranking-table td {
+    border-color: var(--border-dark);
+}
+
+.ranking-table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.ranking-table tbody tr:hover {
+    background: var(--bg-light);
+}
+
+.dark .ranking-table tbody tr:hover {
+    background: #374151;
+}
+
+.ranking-table tbody tr.current-user {
+    background: #dbeafe;
+    font-weight: 600;
+}
+
+.dark .ranking-table tbody tr.current-user {
+    background: #1e3a8a;
+}
+
+/* Cards de jogadores */
+.player-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    border: 2px solid transparent;
+}
+
+.dark .player-card {
+    background: var(--card-dark);
+}
+
+.player-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-blue);
+}
+
+.player-card-selected {
+    border-color: var(--primary-green);
+    background: #d1fae5;
+}
+
+.dark .player-card-selected {
+    background: #064e3b;
+}
+
+/* Campo de futsal (escalação) */
+.field-container {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    min-height: 400px;
+    position: relative;
+}
+
+.field-position {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    margin: 1rem 0;
+    transition: all var(--transition-normal);
+}
+
+.field-position:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.field-position.filled {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: #10b981;
+    border-style: solid;
+}
+
+/* Slot de jogador */
+.player-slot {
+    background: white;
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.dark .player-slot {
+    background: var(--card-dark);
+}
+
+.player-slot-empty {
+    background: var(--bg-light);
+    border: 2px dashed var(--border-light);
+}
+
+.dark .player-slot-empty {
+    background: #374151;
+    border-color: var(--border-dark);
+}
+
+/* Loading spinner */
+.spinner {
+    border: 3px solid rgba(59, 130, 246, 0.1);
+    border-top: 3px solid var(--primary-blue);
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Tabs */
+.tab-button {
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.tab-button:hover {
+    color: var(--primary-blue);
+}
+
+.tab-button.active {
+    color: var(--primary-blue);
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary-blue);
+}
+
+/* Notificações/Toasts */
+.notification {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.5rem;
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    animation: slideIn var(--transition-normal) ease-out;
+}
+
+.dark .notification {
+    background: var(--card-dark);
+}
+
+.notification-success {
+    border-left: 4px solid var(--primary-green);
+}
+
+.notification-error {
+    border-left: 4px solid var(--primary-red);
+}
+
+.notification-warning {
+    border-left: 4px solid var(--primary-yellow);
+}
+
+.notification-info {
+    border-left: 4px solid var(--primary-blue);
+}
+
+/* Overlay de loading */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.modal-content {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+    animation: fadeIn var(--transition-normal) ease-out;
+}
+
+.dark .modal-content {
+    background: var(--card-dark);
+}
+
+/* ============================================
+   RESPONSIVIDADE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .card {
+        padding: 1rem;
+    }
+    
+    .field-container {
+        padding: 1rem;
+        min-height: 300px;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .modal-content {
+        padding: 1.5rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8125rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .ranking-table th,
+    .ranking-table td {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .player-card {
+        padding: 0.75rem;
+    }
+}
+
+/* ============================================
+   UTILIDADES
+   ============================================ */
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.shadow-glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.hover-lift {
+    transition: transform var(--transition-normal);
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+}
+
+/* Scrollbar customizada */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-light);
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* ============================================
+   IMPRESSÃO
+   ============================================ */
+
+@media print {
+    .navbar,
+    .btn,
+    button,
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .card {
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
+    }
+}

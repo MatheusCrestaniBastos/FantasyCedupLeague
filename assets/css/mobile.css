@@ -1,0 +1,573 @@
+/* ============================================
+   RESPONSIVIDADE MOBILE - CEDUP LEAGUE
+   ============================================ */
+
+/**
+ * Este CSS deve ser adicionado DEPOIS do Tailwind
+ * Adicione no <head> de cada HTML:
+ * <link rel="stylesheet" href="assets/css/mobile.css">
+ */
+
+/* ============================================
+   RESET E CONFIGURAÇÕES BASE MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Melhorar scroll em dispositivos touch */
+    html {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+    
+    body {
+        font-size: 14px;
+        overflow-x: hidden;
+    }
+    
+    /* Botões maiores para touch */
+    button, 
+    .btn,
+    a.button {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px 16px !important;
+    }
+    
+    /* Inputs maiores */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important; /* Previne zoom no iOS */
+        min-height: 44px;
+        padding: 10px 12px !important;
+    }
+}
+
+/* ============================================
+   NAVBAR MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    nav .container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* Logo menor */
+    nav h1 {
+        font-size: 1.25rem !important;
+    }
+    
+    /* Menu de navegação em coluna */
+    nav .flex.space-x-4 {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    /* Links menores */
+    nav a {
+        font-size: 0.875rem !important;
+        padding: 0.5rem 0;
+    }
+    
+    /* Ícones e botões menores */
+    nav button svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    
+    /* Info do usuário mais compacta */
+    nav .text-right {
+        display: none; /* Esconde info no navbar, mostra no topo */
+    }
+}
+
+/* ============================================
+   CARDS E ESTATÍSTICAS MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Cards em coluna única */
+    .grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    /* Cards menores */
+    .card,
+    .bg-white,
+    .bg-gray-800 {
+        padding: 1rem !important;
+        margin-bottom: 1rem;
+    }
+    
+    /* Textos menores em cards */
+    .card h2,
+    .card h3 {
+        font-size: 1.125rem !important;
+    }
+    
+    /* Stats cards */
+    .stat-card,
+    .bg-gradient-to-br {
+        padding: 1rem !important;
+    }
+    
+    .stat-card p:first-child {
+        font-size: 0.75rem !important;
+    }
+    
+    .stat-card p.text-4xl {
+        font-size: 2rem !important;
+    }
+    
+    .stat-card .text-5xl {
+        font-size: 2.5rem !important;
+    }
+}
+
+/* ============================================
+   TABELAS MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Scroll horizontal em tabelas */
+    .overflow-x-auto {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    table {
+        min-width: 600px;
+        font-size: 0.75rem !important;
+    }
+    
+    table th,
+    table td {
+        padding: 0.5rem !important;
+        white-space: nowrap;
+    }
+    
+    /* Header da tabela fixo */
+    thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+}
+
+/* ============================================
+   FORMULÁRIOS MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Formulários em coluna */
+    form .grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Labels maiores */
+    label {
+        font-size: 0.875rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Botões de formulário full width */
+    form button[type="submit"],
+    form button[type="button"] {
+        width: 100% !important;
+        margin-top: 0.5rem;
+    }
+    
+    /* Espaçamento entre campos */
+    form > div {
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* ============================================
+   MERCADO - LISTA DE JOGADORES
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Cards de jogadores em coluna única */
+    #lista-jogadores {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    /* Card do jogador mais compacto */
+    #lista-jogadores > div {
+        padding: 0.75rem !important;
+    }
+    
+    /* Foto menor */
+    #lista-jogadores img {
+        width: 3rem !important;
+        height: 3rem !important;
+    }
+    
+    /* Textos menores */
+    #lista-jogadores h3 {
+        font-size: 0.875rem !important;
+    }
+    
+    #lista-jogadores .text-sm {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Preço destacado */
+    #lista-jogadores .text-lg {
+        font-size: 1rem !important;
+    }
+}
+
+/* ============================================
+   MERCADO - ESCALAÇÃO
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Escalação mobile-friendly */
+    #escalacao-atual > div,
+    #resumo-escalacao {
+        padding: 0.75rem !important;
+    }
+    
+    /* Containers de posição menores */
+    [id^="container-"] {
+        padding: 0.5rem !important;
+    }
+    
+    /* Grid de alas em coluna */
+    [id^="container-ala"] {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Botões de ação full width */
+    #btn-salvar-escalacao,
+    #btn-limpar-escalacao {
+        width: 100% !important;
+        padding: 0.875rem !important;
+        font-size: 0.875rem !important;
+    }
+}
+
+/* ============================================
+   MERCADO - FILTROS
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Filtros em coluna */
+    .grid.grid-cols-3 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Selects e inputs full width */
+    select,
+    input[type="text"],
+    input[type="search"] {
+        width: 100% !important;
+    }
+    
+    /* Espaçamento entre filtros */
+    .grid > div {
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* ============================================
+   ADMIN - TABS
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Tabs com scroll horizontal */
+    nav.-mb-px {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        display: flex;
+        flex-wrap: nowrap;
+    }
+    
+    /* Tabs menores */
+    [data-tab] {
+        font-size: 0.75rem !important;
+        padding: 0.5rem 1rem !important;
+        white-space: nowrap;
+    }
+    
+    /* Conteúdo das tabs */
+    [data-content] {
+        padding: 1rem !important;
+    }
+}
+
+/* ============================================
+   MODAIS MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Modal full screen */
+    .modal {
+        padding: 0 !important;
+    }
+    
+    .modal-content,
+    #modal-editar-jogador > div {
+        max-width: 100% !important;
+        min-height: 100vh;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        padding: 1rem !important;
+    }
+    
+    /* Header do modal */
+    .modal-content h3 {
+        font-size: 1.125rem !important;
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* ============================================
+   DASHBOARD - HISTÓRICO
+   ============================================ */
+
+@media (max-width: 768px) {
+    #historico-lista > div {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem !important;
+    }
+    
+    #historico-lista .text-right {
+        text-align: left !important;
+    }
+}
+
+/* ============================================
+   NOTIFICAÇÕES MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .notification,
+    [class*="fixed top-4 right-4"] {
+        left: 1rem !important;
+        right: 1rem !important;
+        top: 1rem !important;
+        width: auto !important;
+    }
+}
+
+/* ============================================
+   LOADING OVERLAY MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    #loading-overlay > div {
+        padding: 1.5rem !important;
+        margin: 1rem;
+    }
+}
+
+/* ============================================
+   BADGES E TAGS
+   ============================================ */
+
+@media (max-width: 768px) {
+    .badge,
+    span[class*="px-2 py-1"] {
+        font-size: 0.625rem !important;
+        padding: 0.25rem 0.5rem !important;
+    }
+}
+
+/* ============================================
+   ESPAÇAMENTOS GERAIS MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Container principal */
+    .container,
+    .max-w-7xl {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    /* Espaçamento vertical */
+    main,
+    .py-8 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    /* Margens */
+    .mb-8 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .mb-6 {
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* ============================================
+   MELHORIAS DE USABILIDADE
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Desabilitar hover em mobile */
+    *:hover {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Área de toque maior */
+    a, button {
+        -webkit-tap-highlight-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    /* Smooth scroll */
+    * {
+        scroll-behavior: smooth;
+    }
+    
+    /* Prevenir seleção acidental */
+    button, 
+    .btn {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+}
+
+/* ============================================
+   LANDSCAPE MOBILE
+   ============================================ */
+
+@media (max-width: 768px) and (orientation: landscape) {
+    /* Em landscape, usar 2 colunas onde fizer sentido */
+    #lista-jogadores {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    /* Cards menores em landscape */
+    .card {
+        padding: 0.75rem !important;
+    }
+}
+
+/* ============================================
+   TELAS MUITO PEQUENAS (< 360px)
+   ============================================ */
+
+@media (max-width: 360px) {
+    body {
+        font-size: 13px;
+    }
+    
+    h1 {
+        font-size: 1.125rem !important;
+    }
+    
+    h2 {
+        font-size: 1rem !important;
+    }
+    
+    button {
+        font-size: 0.75rem !important;
+        padding: 8px 12px !important;
+    }
+}
+
+/* ============================================
+   FIX PARA SAFARI iOS
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Fix para 100vh no Safari */
+    .min-h-screen {
+        min-height: -webkit-fill-available;
+    }
+    
+    /* Fix para inputs no Safari */
+    input,
+    select,
+    textarea {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    
+    /* Fix para sticky no Safari */
+    .sticky {
+        position: -webkit-sticky;
+        position: sticky;
+    }
+}
+
+/* ============================================
+   DARK MODE MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .dark body {
+        background-color: #111827;
+    }
+    
+    .dark .card,
+    .dark .bg-white {
+        background-color: #1f2937;
+    }
+    
+    /* Contraste melhor em telas pequenas */
+    .dark {
+        color: #f9fafb;
+    }
+}
+
+/* ============================================
+   UTILITÁRIOS MOBILE
+   ============================================ */
+
+@media (max-width: 768px) {
+    /* Esconder em mobile */
+    .hidden-mobile {
+        display: none !important;
+    }
+    
+    /* Mostrar apenas em mobile */
+    .show-mobile {
+        display: block !important;
+    }
+    
+    /* Texto centralizado em mobile */
+    .mobile-center {
+        text-align: center !important;
+    }
+    
+    /* Full width em mobile */
+    .mobile-full {
+        width: 100% !important;
+    }
+}
+
+/* ============================================
+   PRINT (Não afetar)
+   ============================================ */
+
+@media print {
+    /* Manter impressão como está */
+}
+
+/* ============================================
+   ANIMAÇÕES MOBILE (Reduzidas)
+   ============================================ */
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ============================================
+   FIM
+   ============================================ */

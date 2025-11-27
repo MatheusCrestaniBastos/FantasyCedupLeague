@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Mercado - CEDUP League</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <style>
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-slide-in-left {
+            animation: slideInLeft 0.6s ease-out forwards;
+        }
+        
+        .animate-slide-in-right {
+            animation: slideInRight 0.6s ease-out forwards;
+        }
+        
+        .animate-slide-in-up {
+            animation: slideInUp 0.6s ease-out forwards;
+        }
+        
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2px;
+            border-radius: 1rem;
+        }
+        
+        .gradient-border-content {
+            background: white;
+            border-radius: calc(1rem - 2px);
+        }
+        
+        .dark .gradient-border-content {
+            background: #1f2937;
+        }
+
+        .player-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .player-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .field-bg {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .field-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 50px,
+                    rgba(255, 255, 255, 0.03) 50px,
+                    rgba(255, 255, 255, 0.03) 100px
+                );
+            pointer-events: none;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        .mobile-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .mobile-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Mobile Filters */
+        .mobile-filters {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+
+        .mobile-filters.open {
+            max-height: 500px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black min-h-screen">
+    
+    <!-- Header Melhorado e Responsivo -->
+    <header class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg shadow-xl border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center gap-3 md:gap-4">
+                    <div class="flex items-center gap-2 md:gap-3">
+                        <div class="text-3xl md:text-4xl animate-float">🛒</div>
+                        <div>
+                            <h1 class="text-lg md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                                Mercado
+                            </h1>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Monte seu time</p>
+                        </div>
+                    </div>
+                    <span id="status-mercado" class="hidden md:inline-flex px-3 md:px-4 py-1 md:py-2 rounded-full text-xs font-bold text-white shadow-lg bg-green-500">
+                        ✅ Aberto
+                    </span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-3">
+                    <a href="dashboard.html" class="inline-flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        Dashboard
+                    </a>
+                    <a href="mercado.html" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        Mercado
+                    </a>
+                    <button id="theme-toggle" class="p-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all transform hover:scale-110 shadow-md">
+                        <span class="dark:hidden text-xl">🌙</span>
+                        <span class="hidden dark:inline text-xl">☀️</span>
+                    </button>
+                    <button onclick="logout()" class="p-3 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50 transition-all transform hover:scale-110 shadow-md" title="Sair">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex md:hidden items-center gap-2">
+                    <!-- Theme Toggle Mobile -->
+                    <button id="theme-toggle-mobile" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
+                        <span class="dark:hidden text-lg">🌙</span>
+                        <span class="hidden dark:inline text-lg">☀️</span>
+                    </button>
+
+                    <!-- Hamburger Button -->
+                    <button id="mobile-menu-button" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
+                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Sidebar -->
+    <div id="mobile-overlay" class="mobile-overlay fixed inset-0 bg-black/50 z-40 md:hidden">
+        <div id="mobile-menu" class="mobile-menu fixed top-0 left-0 bottom-0 w-80 max-w-[85%] bg-white dark:bg-gray-800 shadow-2xl z-50 overflow-y-auto">
+            <div class="p-6">
+                <!-- Header do Menu -->
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="text-3xl">🛒</div>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Menu</h2>
+                    </div>
+                    <button id="close-mobile-menu" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all">
+                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Orçamento Mobile -->
+                <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-800 rounded-xl">
+                    <div class="text-center">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-1">Saldo Disponível</p>
+                        <p id="saldo-atual-mobile" class="text-2xl font-bold text-green-600 dark:text-green-400">C$ 40,00</p>
+                    </div>
+                </div>
+
+                <!-- Links de Navegação Mobile -->
+                <nav class="space-y-2">
+                    <a href="dashboard.html" class="flex items-center gap-3 p-4 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                        <span class="font-semibold">Dashboard</span>
+                    </a>
+
+                    <a href="mercado.html" class="flex items-center gap-3 p-4 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        </svg>
+                        <span class="font-semibold">Mercado</span>
+                    </a>
+
+                    <a id="link-admin-mobile" href="admin.html" class="hidden flex items-center gap-3 p-4 rounded-lg bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span class="font-semibold">Painel Admin</span>
+                    </a>
+
+                    <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>
+
+                    <button onclick="logout()" class="w-full flex items-center gap-3 p-4 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        <span class="font-semibold">Sair da Conta</span>
+                    </button>
+                </nav>
+
+                <!-- Footer do Menu -->
+                <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <p class="text-xs text-center text-gray-500 dark:text-gray-400">
+                        CEDUP League v1.0<br>
+                        Fantasy Futsal
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-8">
+            
+            <!-- Coluna Principal - Jogadores -->
+            <div class="xl:col-span-2 space-y-4 md:space-y-6">
+                
+                <!-- Filtros - Mobile Collapsible -->
+                <div class="animate-slide-in-left gradient-border">
+                    <div class="gradient-border-content p-4 md:p-6">
+                        <button id="toggle-filters-mobile" class="md:hidden w-full flex items-center justify-between mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🔍</span>
+                                <span class="font-semibold text-gray-900 dark:text-white">Filtros</span>
+                            </div>
+                            <svg id="filters-arrow" class="w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <div id="filters-content" class="mobile-filters md:!max-h-none">
+                            <div class="hidden md:flex items-center gap-3 mb-6">
+                                <div class="text-2xl md:text-3xl">🔍</div>
+                                <div>
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white">Filtros e Busca</h2>
+                                    <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Encontre o jogador ideal</p>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-4">
+                                <div>
+                                    <label class="flex items-center gap-2 text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                        Posição
+                                    </label>
+                                    <select id="filtro-posicao" class="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                        <option value="">Todas as posições</option>
+                                        <option value="GOL">🧤 Goleiro</option>
+                                        <option value="FIX">🛡️ Fixo</option>
+                                        <option value="ALA">🏃 Ala</option>
+                                        <option value="PIV">🎯 Pivô</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="flex items-center gap-2 text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                        </svg>
+                                        Time
+                                    </label>
+                                    <select id="filtro-time" class="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                        <option value="">Todos os times</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="sm:col-span-2 md:col-span-1">
+                                    <label class="flex items-center gap-2 text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                        Buscar
+                                    </label>
+                                    <input type="text" id="busca-jogador" placeholder="Nome do jogador..." 
+                                           class="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="flex items-center gap-2 text-xs md:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/>
+                                    </svg>
+                                    Ordenar por
+                                </label>
+                                <select id="filtro-ordem" class="w-full px-3 md:px-4 py-2 md:py-3 text-sm md:text-base border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                    <option value="nome">📝 Nome (A-Z)</option>
+                                    <option value="preco-asc">💰 Preço (Menor → Maior)</option>
+                                    <option value="preco-desc">💎 Preço (Maior → Menor)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-3 md:p-4 mt-4">
+                                <div class="flex items-start gap-2 md:gap-3">
+                                    <div class="text-xl md:text-2xl">⚽</div>
+                                    <div class="text-xs md:text-sm">
+                                        <p class="font-bold text-blue-900 dark:text-blue-200 mb-1">Regras do Futsal</p>
+                                        <p class="text-blue-800 dark:text-blue-300">
+                                            Monte seu time com <strong>5 jogadores</strong>: 1 GOL, 1 FIX, 2 ALA, 1 PIV • Saldo: <strong>C$ 40,00</strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Jogadores -->
+                <div class="animate-slide-in-left" style="animation-delay: 0.2s;">
+                    <div class="gradient-border">
+                        <div class="gradient-border-content p-4 md:p-6">
+                            <div class="flex items-center justify-between mb-4 md:mb-6">
+                                <div class="flex items-center gap-2 md:gap-3">
+                                    <div class="text-2xl md:text-3xl">⭐</div>
+                                    <div>
+                                        <h2 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white">Jogadores</h2>
+                                        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Escolha os melhores</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="lista-jogadores" class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                                <!-- Jogadores serão inseridos aqui via JavaScript -->
+                                <div class="col-span-full text-center py-8 md:py-12">
+                                    <div class="flex flex-col items-center gap-4">
+                                        <div class="relative">
+                                            <div class="animate-spin rounded-full h-12 md:h-16 w-12 md:w-16 border-4 border-blue-200 dark:border-blue-800"></div>
+                                            <div class="animate-spin rounded-full h-12 md:h-16 w-12 md:w-16 border-4 border-transparent border-t-blue-600 dark:border-t-blue-400 absolute top-0 left-0"></div>
+                                        </div>
+                                        <p class="text-sm md:text-base text-gray-500 dark:text-gray-400 font-medium">Carregando jogadores...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna Lateral - Escalação (Desktop) / Modal (Mobile) -->
+            <div class="xl:col-span-1">
+                
+                <!-- Botão Flutuante Mobile para Escalação -->
+                <button id="show-escalacao-mobile" class="xl:hidden fixed bottom-6 right-6 z-30 w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all">
+                    <div class="relative">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span id="counter-jogadores" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">0</span>
+                    </div>
+                </button>
+
+                <!-- Modal Escalação Mobile -->
+                <div id="escalacao-modal-mobile" class="xl:hidden fixed inset-0 bg-black/80 z-40 hidden overflow-y-auto">
+                    <div class="min-h-screen px-4 py-6">
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg mx-auto">
+                            <div class="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 rounded-t-2xl flex items-center justify-between z-10">
+                                <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <span class="text-2xl">⚽</span>
+                                    Sua Escalação
+                                </h3>
+                                <button id="close-escalacao-mobile" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
+                                    <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="p-4 space-y-4" id="escalacao-content-mobile">
+                                <!-- Conteúdo da escalação será duplicado aqui -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Escalação Desktop (permanece igual) -->
+                <div class="hidden xl:block space-y-4 md:space-y-6 animate-slide-in-right" id="escalacao-desktop">
+                    
+                    <!-- Orçamento -->
+                    <div class="gradient-border">
+                        <div class="gradient-border-content p-4 md:p-6">
+                            <div class="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                                <div class="text-2xl md:text-3xl">💰</div>
+                                <div>
+                                    <h3 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Orçamento</h3>
+                                    <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Gerencie suas cartoletas</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3 md:space-y-4">
+                                <div class="flex justify-between items-center p-3 md:p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 md:w-5 h-4 md:h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                        <span class="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">Saldo Total:</span>
+                                    </div>
+                                    <span id="saldo-atual" class="text-base md:text-lg font-bold text-blue-600 dark:text-blue-400">C$ 40,00</span>
+                                </div>
+                                
+                                <div class="flex justify-between items-center p-3 md:p-4 bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/30 dark:to-red-800/30 rounded-xl">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 md:w-5 h-4 md:h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span class="text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300">Custo:</span>
+                                    </div>
+                                    <span id="custo-escalacao" class="text-base md:text-lg font-bold text-red-600 dark:text-red-400">C$ 0,00</span>
+                                </div>
+                                
+                                <div class="border-t-2 border-gray-200 dark:border-gray-700 pt-3 md:pt-4">
+                                    <div class="flex justify-between items-center p-3 md:p-4 bg-gradient-to-r from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-800/30 rounded-xl">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 md:w-5 h-4 md:h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            <span class="text-xs md:text-sm font-bold text-gray-700 dark:text-gray-300">Disponível:</span>
+                                        </div>
+                                        <span id="saldo-restante" class="text-lg md:text-xl font-black text-green-600 dark:text-green-400">C$ 40,00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Escalação -->
+                    <div class="gradient-border">
+                        <div class="gradient-border-content p-4 md:p-6">
+                            <div class="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                                <div class="text-2xl md:text-3xl">⚽</div>
+                                <div>
+                                    <h3 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Sua Escalação</h3>
+                                    <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">Monte seu time titular</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Resumo da Escalação -->
+                            <div id="resumo-escalacao" class="mb-4 md:mb-6">
+                                <!-- Resumo será inserido aqui via JavaScript -->
+                            </div>
+                            
+                            <!-- Campo Visual -->
+                            <div class="field-bg rounded-xl md:rounded-2xl p-4 md:p-6 mb-4 md:mb-6">
+                                <!-- Posições -->
+                                <div class="space-y-3 md:space-y-4">
+                                    <!-- Goleiro -->
+                                    <div>
+                                        <label class="flex items-center gap-2 text-xs font-bold text-white/80 mb-2 uppercase tracking-wider">
+                                            <span class="text-base md:text-lg">🧤</span>
+                                            Goleiro
+                                        </label>
+                                        <div id="container-gol">
+                                            <div class="glass-effect rounded-xl p-3 md:p-4 border-2 border-dashed border-white/30 text-center min-h-[60px] md:min-h-[80px] flex items-center justify-center">
+                                                <div class="text-white/60 text-xs md:text-sm">
+                                                    <div class="text-xl md:text-2xl mb-1">👤</div>
+                                                    <div class="font-semibold">Vazio</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Fixo -->
+                                    <div>
+                                        <label class="flex items-center gap-2 text-xs font-bold text-white/80 mb-2 uppercase tracking-wider">
+                                            <span class="text-base md:text-lg">🛡️</span>
+                                            Fixo
+                                        </label>
+                                        <div id="container-fix">
+                                            <div class="glass-effect rounded-xl p-3 md:p-4 border-2 border-dashed border-white/30 text-center min-h-[60px] md:min-h-[80px] flex items-center justify-center">
+                                                <div class="text-white/60 text-xs md:text-sm">
+                                                    <div class="text-xl md:text-2xl mb-1">👤</div>
+                                                    <div class="font-semibold">Vazio</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Alas -->
+                                    <div>
+                                        <label class="flex items-center gap-2 text-xs font-bold text-white/80 mb-2 uppercase tracking-wider">
+                                            <span class="text-base md:text-lg">🏃</span>
+                                            Alas
+                                        </label>
+                                        <div class="grid grid-cols-2 gap-2 md:gap-3">
+                                            <div id="container-ala-1">
+                                                <div class="glass-effect rounded-xl p-3 md:p-4 border-2 border-dashed border-white/30 text-center min-h-[60px] md:min-h-[80px] flex items-center justify-center">
+                                                    <div class="text-white/60 text-xs md:text-sm">
+                                                        <div class="text-xl md:text-2xl mb-1">👤</div>
+                                                        <div class="font-semibold">Ala 1</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="container-ala-2">
+                                                <div class="glass-effect rounded-xl p-3 md:p-4 border-2 border-dashed border-white/30 text-center min-h-[60px] md:min-h-[80px] flex items-center justify-center">
+                                                    <div class="text-white/60 text-xs md:text-sm">
+                                                        <div class="text-xl md:text-2xl mb-1">👤</div>
+                                                        <div class="font-semibold">Ala 2</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pivô -->
+                                    <div>
+                                        <label class="flex items-center gap-2 text-xs font-bold text-white/80 mb-2 uppercase tracking-wider">
+                                            <span class="text-base md:text-lg">🎯</span>
+                                            Pivô
+                                        </label>
+                                        <div id="container-piv">
+                                            <div class="glass-effect rounded-xl p-3 md:p-4 border-2 border-dashed border-white/30 text-center min-h-[60px] md:min-h-[80px] flex items-center justify-center">
+                                                <div class="text-white/60 text-xs md:text-sm">
+                                                    <div class="text-xl md:text-2xl mb-1">👤</div>
+                                                    <div class="font-semibold">Vazio</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botões de Ação -->
+                            <div class="space-y-2 md:space-y-3">
+                                <button id="btn-salvar-escalacao" onclick="salvarEscalacao()"
+                                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 md:py-4 px-4 md:px-6 rounded-xl transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 text-sm md:text-base">
+                                    <svg class="w-4 md:w-5 h-4 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    Salvar Escalação
+                                </button>
+                                
+                                <button id="btn-limpar-escalacao" onclick="limparEscalacao()"
+                                        class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-3 md:py-4 px-4 md:px-6 rounded-xl transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 text-sm md:text-base">
+                                    <svg class="w-4 md:w-5 h-4 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    Limpar Escalação
+                                </button>
+                                
+                                <div class="text-center pt-2">
+                                    <a href="dashboard.html" class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold text-xs md:text-sm transition-colors">
+                                        <svg class="w-3 md:w-4 h-3 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                        </svg>
+                                        Voltar ao Dashboard
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 md:p-8 flex flex-col items-center space-y-4 shadow-2xl">
+            <div class="relative">
+                <div class="animate-spin rounded-full h-12 md:h-16 w-12 md:w-16 border-4 border-blue-200 dark:border-blue-800"></div>
+                <div class="animate-spin rounded-full h-12 md:h-16 w-12 md:w-16 border-4 border-transparent border-t-blue-600 dark:border-t-blue-400 absolute top-0 left-0"></div>
+            </div>
+            <div class="text-center">
+                <p class="text-gray-900 dark:text-white font-bold text-base md:text-lg">Salvando escalação...</p>
+                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm mt-1">Aguarde um momento</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white/50 dark:bg-gray-800/50 backdrop-blur-lg border-t border-gray-200 dark:border-gray-700 mt-8 md:mt-12 py-4 md:py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400">
+                ⚽ <strong>CEDUP League</strong> - Mercado de Futsal • 2024
+            </p>
+            <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                Monte seu time dos sonhos e conquiste o topo!
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/theme.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/mercado.js"></script>
+    
+    <!-- Mobile Scripts -->
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+
+        function openMobileMenu() {
+            mobileMenu.classList.add('open');
+            mobileOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileMenu() {
+            mobileMenu.classList.remove('open');
+            mobileOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        mobileMenuButton?.addEventListener('click', openMobileMenu);
+        closeMobileMenuButton?.addEventListener('click', closeMobileMenu);
+        mobileOverlay?.addEventListener('click', (e) => {
+            if (e.target === mobileOverlay) {
+                closeMobileMenu();
+            }
+        });
+
+        // Theme Toggle Mobile
+        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+        if (themeToggleMobile) {
+            themeToggleMobile.addEventListener('click', toggleTheme);
+        }
+
+        // Filters Toggle Mobile
+        const toggleFiltersMobile = document.getElementById('toggle-filters-mobile');
+        const filtersContent = document.getElementById('filters-content');
+        const filtersArrow = document.getElementById('filters-arrow');
+
+        toggleFiltersMobile?.addEventListener('click', () => {
+            filtersContent.classList.toggle('open');
+            filtersArrow.classList.toggle('rotate-180');
+        });
+
+        // Escalação Modal Mobile
+        const showEscalacaoMobile = document.getElementById('show-escalacao-mobile');
+        const escalacaoModalMobile = document.getElementById('escalacao-modal-mobile');
+        const closeEscalacaoMobile = document.getElementById('close-escalacao-mobile');
+        const escalacaoDesktop = document.getElementById('escalacao-desktop');
+        const escalacaoContentMobile = document.getElementById('escalacao-content-mobile');
+
+        function updateMobileEscalacao() {
+            if (escalacaoDesktop && escalacaoContentMobile) {
+                escalacaoContentMobile.innerHTML = escalacaoDesktop.innerHTML;
+            }
+        }
+
+        function updateCounterJogadores() {
+            const counter = document.getElementById('counter-jogadores');
+            if (counter) {
+                const total = calcularTotalJogadores();
+                counter.textContent = total;
+                counter.className = total > 0 
+                    ? 'absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center animate-pulse' 
+                    : 'absolute -top-2 -right-2 bg-gray-400 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center';
+            }
+        }
+
+        showEscalacaoMobile?.addEventListener('click', () => {
+            updateMobileEscalacao();
+            escalacaoModalMobile.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeEscalacaoMobile?.addEventListener('click', () => {
+            escalacaoModalMobile.classList.add('hidden');
+            document.body.style.overflow = '';
+        });
+
+        // Sincronizar saldo no menu mobile
+        function syncMobileSaldo() {
+            const saldo = document.getElementById('saldo-atual')?.textContent;
+            const saldoMobile = document.getElementById('saldo-atual-mobile');
+            if (saldoMobile && saldo) {
+                saldoMobile.textContent = saldo;
+            }
+        }
+
+        // Observar mudanças
+        const saldoObserver = new MutationObserver(syncMobileSaldo);
+        const saldoEl = document.getElementById('saldo-atual');
+        if (saldoEl) {
+            saldoObserver.observe(saldoEl, { childList: true, characterData: true, subtree: true });
+        }
+
+        // Atualizar contador quando escalação mudar
+        setInterval(() => {
+            updateCounterJogadores();
+            syncMobileSaldo();
+        }, 1000);
+
+        setTimeout(syncMobileSaldo, 1000);
+        
+        console.log('✅ Mobile mercado inicializado');
+    </script>
+</body>
+</html>

@@ -409,9 +409,37 @@
                         </div>
                     </div>
 
-                    <button type="button" id="btn-salvar-scout" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors">
-                        💾 Salvar Estatísticas
-                    </button>
+                    <!-- SUBSTITUIR O BOTÃO ANTIGO POR ESTE: -->
+<div class="flex gap-3">
+    <button type="button" onclick="salvarScoutIncremental()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+        Adicionar Estatísticas
+    </button>
+    <button type="button" onclick="visualizarEstatisticasAtuais()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors" title="Ver estatísticas atuais do jogador">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+    </button>
+</div>
+
+<!-- Dica para o usuário -->
+<div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-blue-200 dark:border-blue-800">
+    <div class="flex items-start gap-3">
+        <div class="text-2xl">💡</div>
+        <div class="text-sm text-blue-900 dark:text-blue-200">
+            <p class="font-bold mb-1">Sistema Incremental Automático</p>
+            <ul class="list-disc list-inside space-y-1">
+                <li>As estatísticas são <strong>acumuladas automaticamente</strong></li>
+                <li>Adicione eventos <strong>quantas vezes quiser</strong> durante a partida</li>
+                <li>Use o botão 👁️ para ver o total atual do jogador</li>
+                <li>Ex: Jogador faz gol → Adicione +1 gol → Depois faz outro → Adicione +1 gol novamente</li>
+            </ul>
+        </div>
+    </div>
+</div>
                 </form>
             </div>
         </div>
@@ -477,5 +505,155 @@
     <script src="assets/js/theme.js"></script>
     <script src="assets/js/auth.js"></script>
     <script src="assets/js/admin.js"></script>
+    <!-- ============================================ -->
+<!-- ⭐ SISTEMA DE ESTATÍSTICAS INCREMENTAIS ⭐ -->
+<!-- ============================================ -->
+<script>
+console.log('🔄 Sistema de estatísticas carregando...');
+
+// Usando nome diferente para evitar conflito
+const PONTOS_INCREMENTAL = {
+    goals: 8, assists: 5, shots_on_target: 3, saves: 7,
+    clean_sheet: 5, own_goals: -3, red_cards: -5, yellow_cards: -1, fouls: -0.3
+};
+
+function calcularPontosIncremental(scouts) {
+    let p = 0;
+    p += (scouts.goals||0) * 8 + (scouts.assists||0) * 5 + (scouts.shots_on_target||0) * 3;
+    p += (scouts.saves||0) * 3 + (scouts.clean_sheet||0) * 5;
+    p += (scouts.own_goals||0) * -3 + (scouts.red_cards||0) * -5;
+    p += (scouts.yellow_cards||0) * -1 + (scouts.fouls||0) * -0.3;
+    return parseFloat(p.toFixed(2));
+}
+
+async function salvarScoutIncremental() {
+    console.log('🎯 Executando salvarScoutIncremental()');
+    try {
+        const rid = document.getElementById('scout-rodada')?.value;
+        const jid = document.getElementById('scout-jogador')?.value;
+        if (!rid || !jid) return alert('⚠️ Selecione rodada e jogador');
+        
+        const novos = {
+            goals: parseInt(document.getElementById('scout-gols')?.value||0),
+            assists: parseInt(document.getElementById('scout-assistencias')?.value||0),
+            shots_on_target: parseInt(document.getElementById('scout-finalizacoes')?.value||0),
+            saves: parseInt(document.getElementById('scout-defesas')?.value||0),
+            clean_sheet: document.getElementById('scout-sem-gols')?.checked?1:0,
+            own_goals: parseInt(document.getElementById('scout-gols-contra')?.value||0),
+            yellow_cards: parseInt(document.getElementById('scout-amarelos')?.value||0),
+            red_cards: parseInt(document.getElementById('scout-vermelhos')?.value||0),
+            fouls: parseInt(document.getElementById('scout-faltas')?.value||0)
+        };
+        
+        if (!Object.values(novos).some(v=>v>0)) return alert('⚠️ Adicione alguma estatística');
+        
+        console.log('🔍 Buscando estatística existente...');
+        const {data:exist, error:errBusca} = await supabase.from('player_stats').select('*')
+            .eq('round_id',rid).eq('player_id',jid).maybeSingle();
+        
+        if (errBusca) throw errBusca;
+        
+        let final, pts;
+        
+        if (exist) {
+            console.log('♻️ ACUMULANDO valores existentes...');
+            final = {
+                goals: (exist.goals||0)+novos.goals,
+                assists: (exist.assists||0)+novos.assists,
+                shots_on_target: (exist.shots_on_target||0)+novos.shots_on_target,
+                saves: (exist.saves||0)+novos.saves,
+                clean_sheet: novos.clean_sheet||exist.clean_sheet||0,
+                own_goals: (exist.own_goals||0)+novos.own_goals,
+                yellow_cards: (exist.yellow_cards||0)+novos.yellow_cards,
+                red_cards: (exist.red_cards||0)+novos.red_cards,
+                fouls: (exist.fouls||0)+novos.fouls
+            };
+            pts = calcularPontosIncremental(final);
+            
+            const {error:errUpdate} = await supabase.from('player_stats')
+                .update({...final,points:pts}).eq('id',exist.id);
+            if (errUpdate) throw errUpdate;
+            
+            console.log('✅ Estatística ATUALIZADA!');
+        } else {
+            console.log('✨ CRIANDO nova estatística...');
+            final = novos;
+            pts = calcularPontosIncremental(final);
+            
+            const {error:errInsert} = await supabase.from('player_stats')
+                .insert([{round_id:rid,player_id:jid,...final,points:pts}]);
+            if (errInsert) throw errInsert;
+            
+            console.log('✅ Estatística CRIADA!');
+        }
+        
+        const {data:jog} = await supabase.from('players').select('name').eq('id',jid).single();
+        
+        alert(
+            `✅ SUCESSO! ${exist?'ATUALIZADO':'CRIADO'}\n\n` +
+            `Jogador: ${jog?.name||'Desconhecido'}\n\n` +
+            `📊 TOTAIS NA RODADA:\n` +
+            `⚽ Gols: ${final.goals}\n` +
+            `🎯 Assistências: ${final.assists}\n` +
+            `🎯 Finalizações: ${final.shots_on_target}\n` +
+            `🧤 Defesas: ${final.saves}\n` +
+            `🟨 Amarelos: ${final.yellow_cards}\n` +
+            `🟥 Vermelhos: ${final.red_cards}\n` +
+            `⚠️ Faltas: ${final.fouls}\n\n` +
+            `💯 PONTUAÇÃO: ${pts.toFixed(2)} pontos`
+        );
+        
+        // Limpar formulário
+        ['gols','assistencias','finalizacoes','defesas','gols-contra','amarelos','vermelhos','faltas'].forEach(x=>
+            document.getElementById(`scout-${x}`).value='0');
+        document.getElementById('scout-sem-gols').checked=false;
+        
+        console.log('🎉 Processo concluído!');
+    } catch(e) { 
+        console.error('❌ ERRO:', e);
+        alert('❌ Erro: '+e.message); 
+    }
+}
+
+async function visualizarEstatisticasAtuais() {
+    console.log('👁️ Visualizando estatísticas...');
+    try {
+        const rid = document.getElementById('scout-rodada')?.value;
+        const jid = document.getElementById('scout-jogador')?.value;
+        if (!rid||!jid) return alert('⚠️ Selecione rodada/jogador');
+        
+        const {data:s, error} = await supabase.from('player_stats')
+            .select('*,players(name),rounds(name)')
+            .eq('round_id',rid).eq('player_id',jid).maybeSingle();
+        
+        if (error) throw error;
+        if (!s) return alert('ℹ️ Sem estatísticas ainda.\n\nClique em "Adicionar Estatísticas" para começar!');
+        
+        alert(
+            `📊 ESTATÍSTICAS ATUAIS\n\n` +
+            `Jogador: ${s.players.name}\n` +
+            `Rodada: ${s.rounds.name}\n\n` +
+            `⚽ Gols: ${s.goals||0}\n` +
+            `🎯 Assistências: ${s.assists||0}\n` +
+            `🎯 Finalizações: ${s.shots_on_target||0}\n` +
+            `🧤 Defesas: ${s.saves||0}\n` +
+            `🛡️ Jogo sem gol: ${s.clean_sheet?'Sim':'Não'}\n` +
+            `😬 Gols contra: ${s.own_goals||0}\n` +
+            `🟨 Amarelos: ${s.yellow_cards||0}\n` +
+            `🟥 Vermelhos: ${s.red_cards||0}\n` +
+            `⚠️ Faltas: ${s.fouls||0}\n\n` +
+            `💯 PONTUAÇÃO TOTAL: ${s.points.toFixed(2)} pontos`
+        );
+    } catch(e) { 
+        console.error('❌ ERRO:', e);
+        alert('❌ Erro: '+e.message); 
+    }
+}
+
+window.salvarScoutIncremental = salvarScoutIncremental;
+window.visualizarEstatisticasAtuais = visualizarEstatisticasAtuais;
+console.log('✅ Sistema de estatísticas incrementais carregado com sucesso!');
+</script>
+<!-- ============================================ -->
 </body>
 </html>
